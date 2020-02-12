@@ -1,0 +1,6 @@
+time="2020-02-12T17:41:03+08:00" level=debug msg="[helloworld]"
+time="2020-02-12T17:58:26+08:00" level=debug msg="[invalid query condition: map[BigCategory:development SmallCategory:python]]"
+time="2020-02-12T18:01:52+08:00" level=debug msg="[invalid query condition: map[BigCategory:development SmallCategory:python]]"
+time="2020-02-12T18:48:29+08:00" level=debug msg="[can't conn mysql,err msg: sql: unknown driver \"mysql\" (forgotten import?)]"
+time="2020-02-12T21:29:05+08:00" level=debug msg="[Error 1146: Table 'itbat.main_page' doesn't exist]"
+time="2020-02-12T22:24:29+08:00" level=debug msg="[Error 1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%?%)) LIMIT 10 OFFSET 0' at line 1]"
