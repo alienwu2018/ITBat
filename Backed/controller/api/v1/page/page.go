@@ -33,7 +33,7 @@ func BigCategoryCtr(c *gin.Context) {
 		})
 		return
 	} else {
-		books, err := book.QueryBookByBigCategory(util.GetPage(c), setting.PAGE_SIZE, bigCategory)
+		books, err := book.QueryBookByBigCategory(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bigCategory)
 		row, _ := book.BigCategoryRow(bigCategory)
 		if err != nil {
 			data = map[string]interface{}{"error": "server error"}
@@ -88,7 +88,7 @@ func SmallCategoryCtr(c *gin.Context) {
 		})
 		return
 	} else {
-		books, err := book.QueryBookBySmallCategory(util.GetPage(c), setting.PAGE_SIZE, bigCategory, smallCategory)
+		books, err := book.QueryBookBySmallCategory(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bigCategory, smallCategory)
 		row, _ := book.SmallCategoryRow(bigCategory, smallCategory)
 		if err != nil {
 			data = map[string]interface{}{"error": "server error"}

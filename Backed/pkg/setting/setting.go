@@ -3,36 +3,43 @@ package setting
 import (
 	"gopkg.in/ini.v1"
 	"log"
-	"os"
 	"time"
 )
 
-var (
-	Cfg *ini.File
-
-	RUNMODE string
-
-	//server
+type Server struct {
+	RUNMODE      string
 	HTTPPORT     int
 	READTIMEOUT  time.Duration
 	WRITETIMEOUT time.Duration
+}
 
-	//app
+type App struct {
 	PAGE_SIZE  int
 	JWT_SECRET string
+}
 
-	//database
+type Mysql struct {
 	TYPE     string
 	USER     string
 	PASSWORD string
 	HOST     string
 	NAME     string
+}
 
-	//log
-	SysLog_FILE_PATH   string
-	InnerLog_FILE_PATH string
-	SysLog_FILE_DIR    string
-	InnerLog_FILE_DIR  string
+type Mongo struct {
+	HOST        string
+	DB          string
+	Conllection string
+	User        string
+	Password    string
+}
+
+var (
+	Cfg         *ini.File
+	AppCfg      App
+	ServerCfg   Server
+	DatabaseCfg Mysql
+	MongoCfg    Mongo
 )
 
 func init() {
@@ -41,57 +48,40 @@ func init() {
 	if err != nil {
 		log.Fatal("cant't load config.ini.", err)
 	}
-	LoadBase()
-	LoadApp()
-	LoadServer()
-	LoadDatabase()
-	LoadLog()
-	//检测日志目录是否存在
-	_, err = os.Stat(SysLog_FILE_DIR)
-	if os.IsNotExist(err) {
-		mkdir(SysLog_FILE_DIR)
-	}
-	_, err = os.Stat(InnerLog_FILE_DIR)
-	if os.IsNotExist(err) {
-		mkdir(InnerLog_FILE_DIR)
-	}
+	AppCfg = loadApp()
+	ServerCfg = loadServer()
+	DatabaseCfg = loadDatabase()
+	MongoCfg = loadMongo()
 }
 
-func mkdir(path string) {
-	dir, _ := os.Getwd()
-	err := os.MkdirAll(dir+"/"+path, os.ModePerm)
-	if err != nil {
-		panic(err)
-	}
+func loadApp() App {
+	PAGE_SIZE := Cfg.Section("app").Key("PAGE_SIZE").MustInt(15)
+	JWT_SECRET := Cfg.Section("app").Key("JWT_SECRET").MustString("love$vesan")
+	return App{PAGE_SIZE, JWT_SECRET}
 }
 
-func LoadBase() {
-	RUNMODE = Cfg.Section("").Key("RUN_MODE").MustString("debug")
+func loadServer() Server {
+	RUNMODE := Cfg.Section("").Key("RUN_MODE").MustString("debug")
+	HTTPPORT := Cfg.Section("server").Key("HTTP_PORT").MustInt(8080)
+	READTIMEOUT, _ := Cfg.Section("server").Key("READ_TIMEOUT").Duration()
+	WRITETIMEOUT, _ := Cfg.Section("server").Key("WRITE_TIMEOUT").Duration()
+	return Server{RUNMODE, HTTPPORT, READTIMEOUT, WRITETIMEOUT}
 }
 
-func LoadApp() {
-	PAGE_SIZE = Cfg.Section("app").Key("PAGE_SIZE").MustInt(15)
-	JWT_SECRET = Cfg.Section("app").Key("JWT_SECRET").MustString("love$vesan")
+func loadDatabase() Mysql {
+	TYPE := Cfg.Section("database").Key("TYPE").MustString("mysql")
+	USER := Cfg.Section("database").Key("USER").MustString("root")
+	PASSWORD := Cfg.Section("database").Key("PASSWORD").MustString("root")
+	HOST := Cfg.Section("database").Key("HOST").MustString("127.0.0.1:3306")
+	NAME := Cfg.Section("database").Key("NAME").MustString("itbat")
+	return Mysql{TYPE, USER, PASSWORD, HOST, NAME}
 }
 
-func LoadServer() {
-	HTTPPORT = Cfg.Section("server").Key("HTTP_PORT").MustInt(8080)
-	READTIMEOUT, _ = Cfg.Section("server").Key("READ_TIMEOUT").Duration()
-	WRITETIMEOUT, _ = Cfg.Section("server").Key("WRITE_TIMEOUT").Duration()
-}
-
-func LoadDatabase() {
-	TYPE = Cfg.Section("database").Key("TYPE").MustString("mysql")
-	USER = Cfg.Section("database").Key("USER").MustString("root")
-	PASSWORD = Cfg.Section("database").Key("PASSWORD").MustString("root")
-	HOST = Cfg.Section("database").Key("HOST").MustString("127.0.0.1:3306")
-	NAME = Cfg.Section("database").Key("NAME").MustString("itbat")
-
-}
-
-func LoadLog() {
-	SysLog_FILE_DIR = Cfg.Section("log").Key("sysLog_FILE_DIR").MustString("runtime/logs/SystemLogs")
-	InnerLog_FILE_DIR = Cfg.Section("log").Key("innerLog_FILE_DIR").MustString("runtime/logs/ErrorLogs")
-	SysLog_FILE_PATH = Cfg.Section("log").Key("sysLog_FILE_PATH").MustString("runtime/logs/SystemLogs/syslog")
-	InnerLog_FILE_PATH = Cfg.Section("log").Key("innerLog_FILE_PATH").MustString("runtime/logs/ErrorLogs/errlog")
+func loadMongo() Mongo {
+	HOST := Cfg.Section("mongo").Key("Host").MustString("mongodb://localhost:27017")
+	DB := Cfg.Section("mongo").Key("DB").MustString("itbatlogs")
+	Conllection := Cfg.Section("mongo").Key("Conllection").MustString("logs")
+	User := Cfg.Section("mongo").Key("User").MustString("root")
+	PWD := Cfg.Section("mongo").Key("Password").MustString("root")
+	return Mongo{HOST, DB, Conllection, User, PWD}
 }

@@ -1,20 +1,20 @@
 package main
 
 import (
+	"ITBat/pkg/logging"
 	"ITBat/pkg/setting"
 	"ITBat/router"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
 func main() {
-	gin.SetMode(setting.RUNMODE)
+	gin.SetMode(setting.ServerCfg.RUNMODE)
 	routersInit := router.InitRoute()
-	readTimeout := setting.READTIMEOUT
-	writeTimeout := setting.WRITETIMEOUT
-	endPoint := fmt.Sprintf(":%d", setting.HTTPPORT)
+	readTimeout := setting.ServerCfg.READTIMEOUT
+	writeTimeout := setting.ServerCfg.WRITETIMEOUT
+	endPoint := fmt.Sprintf(":%d", setting.ServerCfg.HTTPPORT)
 	maxHeaderBytes := 1 << 20
 
 	server := &http.Server{
@@ -24,7 +24,6 @@ func main() {
 		WriteTimeout:   writeTimeout,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
-
-	log.Printf("[info] start http server listening %s", endPoint)
-	log.Fatal(server.ListenAndServe())
+	logging.Logger.Printf("[info] start http server listening %s", endPoint)
+	logging.Logger.Fatal(server.ListenAndServe())
 }

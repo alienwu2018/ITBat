@@ -21,10 +21,10 @@ type Model struct {
 
 func init() {
 	var err error
-	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", setting.USER, setting.PASSWORD, setting.HOST, setting.NAME)
-	DB, err = gorm.Open(setting.TYPE, conn)
+	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", setting.DatabaseCfg.USER, setting.DatabaseCfg.PASSWORD, setting.DatabaseCfg.HOST, setting.DatabaseCfg.NAME)
+	DB, err = gorm.Open(setting.DatabaseCfg.TYPE, conn)
 	if err != nil {
-		logging.DebugLog("can't conn mysql,err msg:", err)
+		logging.DebugLog(err)
 	}
 
 	// 全局禁用表名复数

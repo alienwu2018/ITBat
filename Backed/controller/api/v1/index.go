@@ -14,7 +14,7 @@ func Index(c *gin.Context) {
 	data := make(map[string]interface{})
 	var msg string
 
-	books, err := book.QueryIndex(util.GetPage(c), setting.PAGE_SIZE)
+	books, err := book.QueryIndex(util.GetPage(c), setting.AppCfg.PAGE_SIZE)
 	row, _ := book.BooksRow()
 	if err != nil {
 		data = map[string]interface{}{"error": "server error"}

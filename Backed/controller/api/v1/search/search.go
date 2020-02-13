@@ -16,7 +16,7 @@ func BookSearchCtr(c *gin.Context) {
 
 	bookName := c.Query("query")
 	if len(bookName) > 0 {
-		books, err := book.QueryBookByName(util.GetPage(c), setting.PAGE_SIZE, bookName)
+		books, err := book.QueryBookByName(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bookName)
 		row, _ := book.BooksNameRow(bookName)
 		if err != nil {
 			data = map[string]interface{}{"error": "server error"}

@@ -14,5 +14,8 @@ require (
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.4.2
 	github.com/unknwon/com v1.0.1
+	github.com/weekface/mgorus v0.0.0-20181029072001-239539fe10e4
+	go.mongodb.org/mongo-driver v1.3.0 // indirect
 	gopkg.in/ini.v1 v1.52.0
+	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 )

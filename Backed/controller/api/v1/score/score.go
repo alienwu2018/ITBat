@@ -39,7 +39,7 @@ func BookScoreCtr(c *gin.Context) {
 		})
 		return
 	} else {
-		books, err := book.QueryBookByScore(util.GetPage(c), setting.PAGE_SIZE, bigCategory, smallCategory)
+		books, err := book.QueryBookByScore(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bigCategory, smallCategory)
 		row, _ := book.SmallCategoryRow(bigCategory, smallCategory)
 		if err != nil {
 			data = map[string]interface{}{"error": "server error"}

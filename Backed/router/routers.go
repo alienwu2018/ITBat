@@ -15,10 +15,10 @@ import (
 
 func InitRoute() *gin.Engine {
 	gin.DisableConsoleColor()
-	gin.SetMode(setting.RUNMODE)
+	gin.SetMode(setting.ServerCfg.RUNMODE)
 	r := gin.New()
 	//全局中间件
-	r.Use(gin.Logger())
+	//r.Use(gin.Logger())
 	r.Use(middleware.LoggerToFile())
 	r.Use(cors.Default())
 	r.Use(gin.Recovery())
