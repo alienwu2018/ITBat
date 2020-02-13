@@ -9,7 +9,7 @@ import (
 )
 
 // POST api/v1/book/category/:bigCategory/:smallCategory
-func BookScore(c *gin.Context) {
+func BookScoreCtr(c *gin.Context) {
 	code := e.INTERNAL_SERVER_ERROR
 	data := make(map[string]interface{})
 	var msg string

@@ -15,11 +15,32 @@ func BookSearchCtr(c *gin.Context) {
 	var msg string
 
 	bookName := c.Query("query")
-	books, err := book.QueryBookByName(util.GetPage(c), setting.PAGE_SIZE, bookName)
-	row, _ := book.BooksNameRow(bookName)
-	if err != nil {
-		data = map[string]interface{}{"error": "server error"}
-		msg = "server error"
+	if len(bookName) > 0 {
+		books, err := book.QueryBookByName(util.GetPage(c), setting.PAGE_SIZE, bookName)
+		row, _ := book.BooksNameRow(bookName)
+		if err != nil {
+			data = map[string]interface{}{"error": "server error"}
+			msg = "server error"
+			c.JSON(code, gin.H{
+				"code": code,
+				"data": data,
+				"msg":  msg,
+			})
+			return
+		}
+		code = e.OK
+		data = map[string]interface{}{"success": "request success", "books": books, "row": row}
+		msg = "success"
+		c.JSON(code, gin.H{
+			"code": code,
+			"data": data,
+			"msg":  msg,
+		})
+		return
+	} else {
+		code = e.BAD_REQUEST
+		data = map[string]interface{}{"error": "bad request"}
+		msg = "bad requests"
 		c.JSON(code, gin.H{
 			"code": code,
 			"data": data,
@@ -27,13 +48,4 @@ func BookSearchCtr(c *gin.Context) {
 		})
 		return
 	}
-	code = e.OK
-	data = map[string]interface{}{"success": "request success", "books": books, "row": row}
-	msg = "success"
-	c.JSON(code, gin.H{
-		"code": code,
-		"data": data,
-		"msg":  msg,
-	})
-	return
 }
