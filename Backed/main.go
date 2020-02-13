@@ -1,9 +1,30 @@
 package main
 
-import "ITBat/router"
+import (
+	"ITBat/pkg/setting"
+	"ITBat/router"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+)
 
 func main() {
-	// 禁用控制台颜色, 将日志写入文件时不需要控制台颜色
-	r := router.InitRoute()
-	r.Run(":8080")
+	gin.SetMode(setting.RUNMODE)
+	routersInit := router.InitRoute()
+	readTimeout := setting.READTIMEOUT
+	writeTimeout := setting.WRITETIMEOUT
+	endPoint := fmt.Sprintf(":%d", setting.HTTPPORT)
+	maxHeaderBytes := 1 << 20
+
+	server := &http.Server{
+		Addr:           endPoint,
+		Handler:        routersInit,
+		ReadTimeout:    readTimeout,
+		WriteTimeout:   writeTimeout,
+		MaxHeaderBytes: maxHeaderBytes,
+	}
+
+	log.Printf("[info] start http server listening %s", endPoint)
+	log.Fatal(server.ListenAndServe())
 }

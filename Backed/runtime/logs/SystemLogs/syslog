@@ -86,3 +86,5 @@ time="2020-02-13T17:55:57+08:00" level=info client_ip=127.0.0.1 latency_time=18.
 time="2020-02-13T17:56:04+08:00" level=info client_ip=127.0.0.1 latency_time=21.9546ms req_method=GET req_uri="/api/v1/books/category/front-end-development/javascript?page=4" status_code=200
 time="2020-02-13T17:56:12+08:00" level=info client_ip=127.0.0.1 latency_time=20.9429ms req_method=GET req_uri=/api/v1/books/category/front-end-development/javascript status_code=200
 time="2020-02-13T17:56:16+08:00" level=info client_ip=127.0.0.1 latency_time=23.9355ms req_method=POST req_uri=/api/v1/books/category/front-end-development/javascript status_code=200
+time="2020-02-13T18:15:49+08:00" level=info client_ip=127.0.0.1 latency_time=0s req_method=GET req_uri=/ status_code=404
+time="2020-02-13T18:15:50+08:00" level=info client_ip=127.0.0.1 latency_time=0s req_method=GET req_uri=/favicon.ico status_code=404

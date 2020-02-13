@@ -27,3 +27,5 @@
 {"client_ip":"127.0.0.1","latency_time":21954600,"level":"info","msg":"","req_method":"GET","req_uri":"/api/v1/books/category/front-end-development/javascript?page=4","status_code":200,"time":"2020-02-13 17:56:04"}
 {"client_ip":"127.0.0.1","latency_time":20942900,"level":"info","msg":"","req_method":"GET","req_uri":"/api/v1/books/category/front-end-development/javascript","status_code":200,"time":"2020-02-13 17:56:12"}
 {"client_ip":"127.0.0.1","latency_time":23935500,"level":"info","msg":"","req_method":"POST","req_uri":"/api/v1/books/category/front-end-development/javascript","status_code":200,"time":"2020-02-13 17:56:16"}
+{"client_ip":"127.0.0.1","latency_time":0,"level":"info","msg":"","req_method":"GET","req_uri":"/","status_code":404,"time":"2020-02-13 18:15:49"}
+{"client_ip":"127.0.0.1","latency_time":0,"level":"info","msg":"","req_method":"GET","req_uri":"/favicon.ico","status_code":404,"time":"2020-02-13 18:15:50"}

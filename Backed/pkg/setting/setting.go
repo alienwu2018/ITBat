@@ -4,6 +4,7 @@ import (
 	"gopkg.in/ini.v1"
 	"log"
 	"os"
+	"time"
 )
 
 var (
@@ -13,8 +14,8 @@ var (
 
 	//server
 	HTTPPORT     int
-	READTIMEOUT  int
-	WRITETIMEOUT int
+	READTIMEOUT  time.Duration
+	WRITETIMEOUT time.Duration
 
 	//app
 	PAGE_SIZE  int
@@ -75,8 +76,8 @@ func LoadApp() {
 
 func LoadServer() {
 	HTTPPORT = Cfg.Section("server").Key("HTTP_PORT").MustInt(8080)
-	READTIMEOUT = Cfg.Section("server").Key("READ_TIMEOUT").MustInt(60)
-	WRITETIMEOUT = Cfg.Section("server").Key("WRITE_TIMEOUT").MustInt(60)
+	READTIMEOUT, _ = Cfg.Section("server").Key("READ_TIMEOUT").Duration()
+	WRITETIMEOUT, _ = Cfg.Section("server").Key("WRITE_TIMEOUT").Duration()
 }
 
 func LoadDatabase() {
