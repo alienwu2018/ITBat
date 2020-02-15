@@ -2,7 +2,6 @@ package logging
 
 import (
 	"ITBat/pkg/setting"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/weekface/mgorus"
 )
@@ -11,7 +10,6 @@ var Logger *logrus.Logger
 
 func init() {
 	Logger = logrus.New()
-	fmt.Println(setting.MongoCfg.HOST)
 	hooker, err := mgorus.NewHookerWithAuthDb(setting.MongoCfg.HOST, "admin", setting.MongoCfg.DB, setting.MongoCfg.Conllection, setting.MongoCfg.User, setting.MongoCfg.Password)
 	if err == nil {
 		Logger.Hooks.Add(hooker)
