@@ -45,12 +45,20 @@ func (Book) TableName() string {
 }
 
 //主页数据
-func QueryIndex(pageNum, pageSize int) (books []MainPage, err error) {
-	if err = model.DB.Debug().Model(Book{}).Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
-		logging.DebugLog(err)
+func QueryIndex(pageNum, pageSize int, Isscore bool) (books []MainPage, err error) {
+	if !Isscore {
+		if err = model.DB.Debug().Model(Book{}).Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
+		return
+	} else {
+		if err = model.DB.Debug().Model(Book{}).Order("DouBanScore desc").Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
 		return
 	}
-	return
 }
 
 //总条目
@@ -99,16 +107,24 @@ func SmallCategoryRow(BigCategory, SmallCategory string) (row int, err error) {
 }
 
 //按书名分页查询
-func QueryBookByName(pageNum int, pageSize int, BookName string) (books []MainPage, err error) {
+func QueryBookByName(pageNum int, pageSize int, BookName string, isScore bool) (books []MainPage, err error) {
 	var buffer bytes.Buffer
 	buffer.WriteString("%")
 	buffer.WriteString(BookName)
 	buffer.WriteString("%")
-	if err = model.DB.Debug().Model(Book{}).Where("BookName Like ?", buffer.String()).Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
-		logging.DebugLog(err)
+	if !isScore {
+		if err = model.DB.Debug().Model(Book{}).Where("BookName Like ?", buffer.String()).Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
+		return
+	} else {
+		if err = model.DB.Debug().Model(Book{}).Where("BookName Like ?", buffer.String()).Order("DouBanScore desc").Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
 		return
 	}
-	return
 }
 
 func BooksNameRow(BookName string) (row int, err error) {
@@ -124,17 +140,34 @@ func BooksNameRow(BookName string) (row int, err error) {
 }
 
 //按豆瓣分数排序分页查询
-func QueryBookByScore(pageNum int, pageSize int, BigCategory, SmallCategory string) (books []MainPage, err error) {
-	if err = model.DB.Debug().Model(Book{}).Where("BigCategory=? and SmallCategory=?", BigCategory, SmallCategory).Offset(pageNum).Limit(pageSize).Order("DouBanScore desc").Find(&books).Error; err != nil {
+func QueryBookByScore(pageNum int, pageSize int, BigCategory, SmallCategory string, hasSamll bool) (books []MainPage, err error) {
+	if hasSamll {
+		if err = model.DB.Debug().Model(Book{}).Where("BigCategory=? and SmallCategory=?", BigCategory, SmallCategory).Order("DouBanScore desc").Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
+		return
+	} else {
+		if err = model.DB.Debug().Model(Book{}).Where("BigCategory=?", BigCategory).Order("DouBanScore desc").Offset(pageNum).Limit(pageSize).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
+		return
+	}
+}
+
+//获取书本详细信息
+func QueryBookById(BId int) (book Book, err error) {
+	if err = model.DB.Debug().Model(Book{}).Where("Id = ?", BId).First(&book).Error; err != nil {
 		logging.DebugLog(err)
 		return
 	}
 	return
 }
 
-//获取书本详细信息
-func QueryBookById(BId int) (book Book, err error) {
-	if err = model.DB.Debug().Model(Book{}).Where("Id = ?", BId).First(&book).Error; err != nil {
+//查询书籍的所有分类
+func QueryAllCategory() (book []Book, err error) {
+	if err = model.DB.Raw("select `BigCategory`,`SmallCategory` from `book` group by `BigCategory`,`SmallCategory`").Scan(&book).Error; err != nil {
 		logging.DebugLog(err)
 		return
 	}

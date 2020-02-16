@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// POST api/v1/book/category/:bigCategory/:smallCategory
-func BookScoreCtr(c *gin.Context) {
+// GET api/v1/book/category/:bigCategory/:smallCategory/score
+func BookScoreV1Ctr(c *gin.Context) {
 	code := e.INTERNAL_SERVER_ERROR
 	data := make(map[string]interface{})
 	var msg string
@@ -39,8 +39,7 @@ func BookScoreCtr(c *gin.Context) {
 		})
 		return
 	} else {
-		books, err := book.QueryBookByScore(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bigCategory, smallCategory)
-		row, _ := book.SmallCategoryRow(bigCategory, smallCategory)
+		books, err := book.QueryBookByScore(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bigCategory, smallCategory, true)
 		if err != nil {
 			data = map[string]interface{}{"error": "server error"}
 			msg = "server error"
@@ -52,7 +51,54 @@ func BookScoreCtr(c *gin.Context) {
 			return
 		}
 		code = e.OK
-		data = map[string]interface{}{"success": "request success", "books": books, "row": row}
+		data = map[string]interface{}{"success": "request success", "books": books}
+		msg = "success"
+		c.JSON(code, gin.H{
+			"code": code,
+			"data": data,
+			"msg":  msg,
+		})
+		return
+	}
+}
+
+// GET api/v1/book/category/:bigCategory/score
+func BookScoreV2Ctr(c *gin.Context) {
+	code := e.INTERNAL_SERVER_ERROR
+	data := make(map[string]interface{})
+	var msg string
+
+	bigCategory := c.Param("bigCategory")
+	flag := 0
+	for _, i := range e.BingCategory {
+		if bigCategory == i {
+			flag += 1
+		}
+	}
+	if flag != 1 {
+		code = e.BAD_REQUEST
+		data = map[string]interface{}{"error": "bad request"}
+		msg = "bad requests"
+		c.JSON(code, gin.H{
+			"code": code,
+			"data": data,
+			"msg":  msg,
+		})
+		return
+	} else {
+		books, err := book.QueryBookByScore(util.GetPage(c), setting.AppCfg.PAGE_SIZE, bigCategory, "", false)
+		if err != nil {
+			data = map[string]interface{}{"error": "server error"}
+			msg = "server error"
+			c.JSON(code, gin.H{
+				"code": code,
+				"data": data,
+				"msg":  msg,
+			})
+			return
+		}
+		code = e.OK
+		data = map[string]interface{}{"success": "request success", "books": books}
 		msg = "success"
 		c.JSON(code, gin.H{
 			"code": code,

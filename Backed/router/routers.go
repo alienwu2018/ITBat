@@ -3,6 +3,7 @@ package router
 import (
 	v1 "ITBat/controller/api/v1"
 	"ITBat/controller/api/v1/book"
+	"ITBat/controller/api/v1/category"
 	"ITBat/controller/api/v1/download"
 	"ITBat/controller/api/v1/page"
 	"ITBat/controller/api/v1/score"
@@ -26,7 +27,10 @@ func InitRoute() *gin.Engine {
 	apiv1 := r.Group("/api/v1")
 	{
 		apiv1.GET("/index", v1.Index)
+		apiv1.PUT("/index", v1.IndexScore)
+		apiv1.GET("/categories", category.DoCategoryCtr)
 		apiv1.GET("/search", search.BookSearchCtr)
+
 		b := apiv1.Group("/book")
 		{
 			b.GET("/:bid", book.BooksCtr)
@@ -35,8 +39,9 @@ func InitRoute() *gin.Engine {
 		bs := apiv1.Group("/books")
 		{
 			bs.GET("/category/:bigCategory", page.BigCategoryCtr)
-			bs.POST("/category/:bigCategory/:smallCategory", score.BookScoreCtr)
+			bs.PUT("/category/:bigCategory", score.BookScoreV2Ctr)
 			bs.GET("/category/:bigCategory/:smallCategory", page.SmallCategoryCtr)
+			bs.PUT("/category/:bigCategory/:smallCategory", score.BookScoreV1Ctr)
 		}
 	}
 	return r
