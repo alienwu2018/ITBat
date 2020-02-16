@@ -13,7 +13,7 @@ type Tree struct {
 //将书籍类型进行分类并获得前端真正显示的名称
 //ex:category{front:{js,css,html},back{java,python}}
 //ex:trueValue{前端{xxx,xxx}}
-func DoCategory(books []book.Book) (category, trueValue []Tree) {
+func DoCategory(books []book.Book) (category map[string]string, trueValue []Tree) {
 	var result = make(map[string][]string)
 	flag := ""
 	for _, book := range books {
@@ -74,11 +74,14 @@ func DoCategory(books []book.Book) (category, trueValue []Tree) {
 		}
 		trueName = append(trueName, Tree{label, c})
 	}
+	var Relation = make(map[string]string)
 	for i := 0; i < len(trueName); i++ {
+		Relation[e.Mapper[trueName[i].Label]] = trueName[i].Label
 		trueName[i].Label = e.Mapper[trueName[i].Label]
 		for j := 0; j < len(trueName[i].Children); j++ {
+			Relation[e.Mapper[trueName[i].Children[j]["label"]]] = trueName[i].Children[j]["label"]
 			trueName[i].Children[j]["label"] = e.Mapper[trueName[i].Children[j]["label"]]
 		}
 	}
-	return categories, trueName
+	return Relation, trueName
 }
