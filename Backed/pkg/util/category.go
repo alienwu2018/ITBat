@@ -5,8 +5,8 @@ import (
 )
 
 type Tree struct {
-	Label    string
-	Children []interface{}
+	Label    string      `json:"label"`
+	Children []interface{} `json:"children"`
 }
 
 //将书籍类型进行分类
