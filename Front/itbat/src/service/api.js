@@ -6,6 +6,9 @@ export const apiurl = {
     //主页接口
     index : baseUrl+"/index",
 
+    //获取书籍分类总数接口
+    docategories : baseUrl+"/categories",
+
     //查找接口
     search : baseUrl+"/search",
 

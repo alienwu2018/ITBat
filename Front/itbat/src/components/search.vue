@@ -7,6 +7,7 @@
         <div class="ul2">
             <div class="head">
                <span class="title">所有书籍</span>
+               <a href="#" class="score" @click="score"><i class="el-icon-top">按好评排序</i></a>
             </div>
             <div class="content">
               <ul class="ul">
@@ -72,13 +73,15 @@ export default {
         books:null,
         pages : 0, 
         currentPage:1,
+        isscore : false,
     }
   },
   methods:{
     handleCurrentChange(val) {
     var that = this;
     var keyword=that.$route.query.query;
-    this.$axios({
+    if(that.isscore==false){
+      this.$axios({
         type:"get",
         url:apiurl.search,
         params:{
@@ -92,7 +95,40 @@ export default {
             that.pages = res.data.data.row
         }
     })
+    }else{
+      this.$axios({
+              method:"put",
+              url:apiurl.search,
+              params:{
+                  "query":keyword,
+                  "page":val,
+              }
+          }).then(res=>{
+              if(res.status==200){
+                  this.books = null
+                  that.books = res.data.data.books
+              }
+          })
     }
+    },
+    score(){
+          var that = this;
+          that.isscore =true;
+          var keyword=that.$route.query.query;
+          this.$axios({
+              method:"put",
+              url:apiurl.search,
+              params:{
+                  "query":keyword,
+                  "page":that.currentPage,
+              }
+          }).then(res=>{
+              if(res.status==200){
+                  this.books = null
+                  that.books = res.data.data.books
+              }
+          })
+      }
   }
 }
 </script>
@@ -144,8 +180,28 @@ export default {
 }
 .title{
   position: relative;
+  float: left;
   top:20px;
   left:10px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  font-size: 25px;
+  font-weight: bolder;
+}
+.score{
+  position: relative;
+  float: left;
+  top:30px;
+  left:100px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: red;
+  font-size: 15px;
+  font-weight: bolder;
+}
+.title1{
+  position: relative;
+  top:20px;
+  left:80px;
   font-family: Arial, Helvetica, sans-serif;
   color: #333;
   font-size: 25px;

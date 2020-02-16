@@ -2,9 +2,7 @@
     <div class="body">
         <div class="ul1">
           <span class="title1">书籍分类</span>
-          <ul>
-
-          </ul>
+            <el-tree class="tree" :data="categories" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
         </div>
         <div class="ul2">
             <div class="head">
@@ -56,14 +54,22 @@ import {apiurl} from "../service/api.js"
 export default {
   name: 'index',
   created(){
-       var that = this;
+        var that = this;
         this.$axios({
-            type:"get",
+            method:"get",
             url:apiurl.index,
         }).then(res=>{
             if(res.status==200){
                that.books = res.data.data.books
                that.pages = res.data.data.row
+            }
+        })
+        this.$axios({
+            method:"get",
+            url:apiurl.docategories,
+        }).then(res=>{
+            if(res.status==200){
+              that.categories = res.data.data
             }
         })
   },
@@ -72,34 +78,57 @@ export default {
         books:null,
         pages : 0, 
         currentPage:1,
+        isscore : false,
+        categories:[],
     }
   },
   methods:{
+      handleNodeClick(data) {
+        console.log(data);
+      },
       handleCurrentChange(val) {
         var that = this;
-        this.$axios({
-            type:"get",
-            url:apiurl.index+'?page='+val,
-        }).then(res=>{
-            if(res.status==200){
-               this.books = null
-               that.books = res.data.data.books
-               that.pages = res.data.data.row
-            }
-        })
+        if (that.isscore==false){
+          this.$axios({
+              method:"get",
+              url:apiurl.index+'?page='+val,
+          }).then(res=>{
+              if(res.status==200){
+                  this.books = null
+                  that.books = res.data.data.books
+                  that.pages = res.data.data.row
+              }
+          })
+        }else{
+            this.$axios({
+                method:"put",
+                url:apiurl.index,
+                params:{
+                "page":val,
+                }
+            }).then(res=>{
+                if(res.status==200){
+                    this.books = null
+                    that.books = res.data.data.books
+                }
+            })
+        }
       },
       score(){
-          // var that = this;
-          // this.$axios({
-          //     type:"post",
-          //     url:apiurl.score,
-          // }).then(res=>{
-          //     if(res.status==200){
-          //         this.books = null
-          //         that.books = res.data.data.books
-          //         that.pages = res.data.data.row
-          //     }
-          // })
+          var that = this;
+          that.isscore = true;
+          this.$axios({
+              method:"put",
+              url:apiurl.index,
+              params:{
+              "page":that.currentPage,
+              }
+          }).then(res=>{
+              if(res.status==200){
+                  this.books = null
+                  that.books = res.data.data.books
+              }
+          })
       }
   }
 }
@@ -135,6 +164,11 @@ export default {
   float: left;
   height: 100%;
   width: 30%;
+}
+.tree{
+  position: relative;
+  top:50px;
+  left: 50px;
 }
 .ul2{
   position: relative;
