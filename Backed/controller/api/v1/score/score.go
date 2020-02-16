@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GET api/v1/book/category/:bigCategory/:smallCategory/score
+// PUT api/v1/book/category/:bigCategory/:smallCategory
 func BookScoreV1Ctr(c *gin.Context) {
 	code := e.INTERNAL_SERVER_ERROR
 	data := make(map[string]interface{})
@@ -62,7 +62,7 @@ func BookScoreV1Ctr(c *gin.Context) {
 	}
 }
 
-// GET api/v1/book/category/:bigCategory/score
+// PUT api/v1/book/category/:bigCategory
 func BookScoreV2Ctr(c *gin.Context) {
 	code := e.INTERNAL_SERVER_ERROR
 	data := make(map[string]interface{})

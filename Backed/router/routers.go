@@ -29,7 +29,8 @@ func InitRoute() *gin.Engine {
 		apiv1.GET("/index", v1.Index)
 		apiv1.PUT("/index", v1.IndexScore)
 		apiv1.GET("/categories", category.DoCategoryCtr)
-		apiv1.GET("/search", search.BookSearchCtr)
+		apiv1.GET("/search", search.BookSearchV1Ctr)
+		apiv1.PUT("/search", search.BookSearchV2Ctr)
 
 		b := apiv1.Group("/book")
 		{

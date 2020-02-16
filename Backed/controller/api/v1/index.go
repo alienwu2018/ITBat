@@ -37,7 +37,7 @@ func Index(c *gin.Context) {
 	return
 }
 
-//GET api/v1/index/score
+//PUT api/v1/index
 func IndexScore(c *gin.Context) {
 	code := e.INTERNAL_SERVER_ERROR
 	data := make(map[string]interface{})
