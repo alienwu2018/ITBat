@@ -25,8 +25,8 @@ func DoCategoryCtr(c *gin.Context) {
 		return
 	}
 	code = e.OK
-	relation, trueName := util.DoCategory(books)
-	data = map[string]interface{}{"relation": relation, "trueName": trueName}
+	relation := util.DoCategory(books)
+	data = map[string]interface{}{"relation": relation}
 	msg = "success"
 	c.JSON(code, gin.H{
 		"code": code,
