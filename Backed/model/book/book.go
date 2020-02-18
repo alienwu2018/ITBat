@@ -173,3 +173,30 @@ func QueryAllCategory() (book []Book, err error) {
 	}
 	return
 }
+
+//推荐书籍
+func RecommendBooks(bid int) (books []MainPage, err error) {
+	//该书籍处于的小类
+	var smallcategory string
+	var bigcategory string
+	var b Book
+	if err = model.DB.Model(b).Select("BigCategory,SmallCategory").Where("id=?", bid).First(&b).Error; err != nil {
+		logging.DebugLog(err)
+		return
+	}
+	smallcategory = b.SmallCategory
+	if smallcategory != "" {
+		if err = model.DB.Model(Book{}).Where("SmallCategory =?", smallcategory).Order("RAND()").Limit(5).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
+		return
+	} else {
+		bigcategory = b.BigCategory
+		if err = model.DB.Model(Book{}).Where("BigCategory =?", bigcategory).Order("RAND()").Limit(5).Find(&books).Error; err != nil {
+			logging.DebugLog(err)
+			return
+		}
+		return
+	}
+}

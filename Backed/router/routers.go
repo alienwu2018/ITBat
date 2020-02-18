@@ -6,6 +6,7 @@ import (
 	"ITBat/controller/api/v1/category"
 	"ITBat/controller/api/v1/download"
 	"ITBat/controller/api/v1/page"
+	"ITBat/controller/api/v1/recommend"
 	"ITBat/controller/api/v1/score"
 	"ITBat/controller/api/v1/search"
 	"ITBat/middleware"
@@ -36,6 +37,7 @@ func InitRoute() *gin.Engine {
 		{
 			b.GET("/:bid", book.BooksCtr)
 			b.GET("/:bid/download/:bid", download.DownBookCtr)
+			b.GET("/:bid/recommend/:bid", recommend.RecommendsCtr)
 		}
 		bs := apiv1.Group("/books")
 		{
