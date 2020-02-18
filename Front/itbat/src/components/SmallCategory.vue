@@ -7,7 +7,7 @@
     <div class="ul2">
       <div class="head">
         <span class="title">所有书籍</span>
-        <a href="javascript:void(0);" class="score" @click="score">
+        <a href="javascript:void(0);" class="score">
           <i class="el-icon-top">按好评排序</i></a>
       </div>
       <div class="content">
@@ -18,7 +18,7 @@
             </div>
             <div class="ceng">
               <div class="bookname">
-                <router-link :to="{name:'book', params: {bid:i.id}}" style="text-decoration:none;color:black"  target="_blank">
+                <router-link :to="{name:'book', params: {bid:i.id}}" style="text-decoration:none;color:black" target="_blank">
                   <span>{{i.book_name}}</span></router-link>
               </div>
               <div class="autor">
@@ -42,17 +42,19 @@
 import {apiurl} from "../service/api.js"
 
 export default {
-  name: 'index',
+  name: 'search',
   created(){
         var that = this;
-        //首次访问,获取首页的数据
+        var keyword1=that.$route.params.BigCategory
+        var keyword2=that.$route.params.SmallCategory
+        // // //首次访问,获取类别的数据
         that.$axios({
-            method:"get",
-            url:apiurl.index,
+            type:"get",
+            url:apiurl.category+keyword1+"/"+keyword2,
         }).then(res=>{
             if(res.status==200){
-               that.books = res.data.data.books
-               that.pages = res.data.data.row
+                that.books = res.data.data.books
+                that.pages = res.data.data.row
             }
         })
         //获取书籍的总类别渲染树形结构
@@ -85,63 +87,54 @@ export default {
   methods:{
       //操作树形结构的事件
       handleNodeClick(data,node) {
-          // alert(this.mapper[node.parent['label']])
-          // alert(this.mapper[data['label']])
-          var father = this.mapper[node.parent['label']]
-          var son = this.mapper[data['label']]
-          if(father==undefined){
-             this.$router.push({ name: 'bigcategory', params: {BigCategory:son}})
-          }else{
-             this.$router.push({ name: 'smallcategory', params: {BigCategory:father,SmallCategory:son}})
-          }
+           var father = this.mapper[node.parent['label']]
+           var son = this.mapper[data['label']]
+           if(father==undefined){
+                this.$router.push({ name: 'bigcategory', params: {BigCategory:son}})
+           }else{
+                this.$router.push({ name: 'smallcategory', params: {BigCategory:father,SmallCategory:son}})
+           }
       },
       //分页组件的事件
       handleCurrentChange(val) {
         var that = this
-        //判断是否按评分排序
-        if(that.isscore){
-            that.$axios({
-            method:"put",
-            url:apiurl.index,
-            params:{
-              "page":val,
-            }
-            }).then(res=>{
-                if(res.status==200){
-                  that.books = res.data.data.books
-                  // that.pages = res.data.data.row
-                }
-            })
-        }else{
-            that.$axios({
-            method:"get",
-            url:apiurl.index,
-            params:{
-              "page":val,
-            }
-            }).then(res=>{
-                if(res.status==200){
-                  that.books = res.data.data.books
-                  // that.pages = res.data.data.row
-                }
-            })
+        var keyword1=that.$route.params.BigCategory
+        var keyword2=that.$route.params.SmallCategory
+        that.$axios({
+        method:"get",
+        url:apiurl.category+keyword1+"/"+keyword2,
+        params:{
+            "page":val,
         }
-       
-      },
-      //按评分排序事件
-      score(){ 
-          var that = this
-          that.isscore = true
-          that.$axios({
-            method:"put",
-            url:apiurl.index,
-          }).then(res=>{
+        }).then(res=>{
             if(res.status==200){
-               that.books = res.data.data.books
+                that.books = res.data.data.books
+                // that.pages = res.data.data.row
             }
         })
       },
-  }
+  },
+   watch: {
+      $route(){  //监听路由参数变化
+        var that = this
+        that.currentPage=1
+        var father = that.$route.params.BigCategory
+        var son = that.$route.params.SmallCategory
+        if (son!=undefined){
+            that.$axios({
+            type:"get",
+            url:apiurl.category+father+"/"+son,
+            }).then(res=>{
+                if(res.status==200){
+                    that.books = res.data.data.books
+                    that.pages = res.data.data.row
+                }
+            })
+        }else{
+           this.$router.push({ name: 'bigcategory', params: {BigCategory:father}})
+        }
+      },
+}
 }
 </script>
 

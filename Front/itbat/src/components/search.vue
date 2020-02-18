@@ -1,49 +1,41 @@
 <template>
-    <div class="body">
-        <div class="ul1">
-          <ul>
-          </ul>
-        </div>
-        <div class="ul2">
-            <div class="head">
-               <span class="title">所有书籍</span>
-               <a href="#" class="score" @click="score"><i class="el-icon-top">按好评排序</i></a>
-            </div>
-            <div class="content">
-              <ul class="ul">
-                  <li v-for="i in books" class="li">
-                    <div class="img">
-                      <img :src="i.png_url" class="img" border="1"/>
-                    </div>
-                    <div class="ceng">
-                      <div class="bookname">
-                        <span>{{i.book_name}}</span>
-                      </div>
-                      <div class="autor">
-                        <span>作者:{{i.autor}}</span>
-                      </div>
-                    </div>
-                    <br/>
-                    <br/>
-                     <div class="desc">
-                        <span style="font-size:12px;">{{"简述:  "+i.content.substr(0,201)+"..."}}</span>
-                        <a href="#" style="text-decoration:none;color:red;font-size:15px">详情</a>
-                    </div>
-                  </li>
-              </ul>
-            </div>
-            <div class="foot">
-                 <el-pagination
-              class="fenye"
-              background
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :total="pages">
-              </el-pagination>
-            </div>
-        </div>
+  <div class="body">
+    <div class="ul1">
+      <span class="title1">书籍分类</span>
+      <el-tree class="tree" :data="tree" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
     </div>
+    <div class="ul2">
+      <div class="head">
+        <span class="title">所有书籍</span>
+        <a href="javascript:void(0);" class="score">
+          <i class="el-icon-top">按好评排序</i></a>
+      </div>
+      <div class="content">
+        <ul class="ul">
+          <li v-for="i in books" class="li">
+            <div class="imgdiv">
+              <img :src="i.png_url" class="img" border="1" />
+            </div>
+            <div class="ceng">
+              <div class="bookname">
+                <router-link :to="{name:'book', params: {bid:i.id}}" style="text-decoration:none;color:black" target="_blank">
+                  <span>{{i.book_name}}</span></router-link>
+              </div>
+              <div class="autor">
+                <span>作者:{{i.autor}}</span></div>
+                          <div class="desc">
+              <span style="font-size:12px;">{{"简述: "+i.content.substr(0,201)+"..."}}</span>
+              <router-link :to="{name:'book', params: {bid:i.id}}" style="text-decoration:none;color:red;font-size:10px" target="_blank">
+                 详情</router-link></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="foot">
+        <el-pagination class="fenye" background layout="prev, pager, next" @current-change="handleCurrentChange" :current-page.sync="currentPage" :total="pages"></el-pagination>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -53,9 +45,9 @@ export default {
   name: 'search',
   created(){
         var that = this;
-        var keyword=that.$route.query.query;
-        that.books = null;
-        this.$axios({
+        var keyword=that.$route.query.query
+        // //首次访问,获取搜索关键字的数据
+        that.$axios({
             type:"get",
             url:apiurl.search,
             params:{
@@ -67,69 +59,81 @@ export default {
                 that.pages = res.data.data.row
             }
         })
+        //获取书籍的总类别渲染树形结构
+        that.$axios({
+            method:"get",
+            url:apiurl.docategories,
+        }).then(res=>{
+            if(res.status==200){
+              that.mapper = res.data.data.relation
+            }
+        })
   },
   data () {
     return {
-        books:null,
-        pages : 0, 
-        currentPage:1,
-        isscore : false,
+        books:null,     //书籍的数据
+        pages : 0,      //总页数
+        currentPage:1,  //当前页数
+        isscore : false,  //是否按评分排序
+        mapper:null,      //树形结构中文名字对应的接口参数映射
+
+        tree:[{label:'前端开发',children:[{label:'JavaScript'},{label:'Node.js'},{label:'HTML&CSS'},{label:'框架和库'},{label:'其他'}]},
+              {label:'后端开发',children:[{label:'C'},{label:'C++'},{label:'Python'},{label:'Java'},{label:'Go'},{label:'PHP'},{label:'C#'},{label:'Rust'},{label:'Erlang'},{label:'其他'}]},
+              {label:'移动开发',children:[{label:'IOS'},{label:'Andriod'},{label:'其它'}]},
+              {label:'机器学习'},{label:'数据挖掘'},{label:'大数据与云计算'},{label:'网络编程'},{label:'算法与数据结构'},
+              {label:'数据库'},{label:'操作系统'},{label:'编译原理'},{label:'计算机科学'},{label:'软件开发与软件工程'},
+              {label:'网络安全'},{label:'运维管理'},{label:'游戏开发与游戏设计'},{label:'硬件'},{label:'搜索引擎'},
+              {label:'区块链'},{label:'消息队列'},{label:'交互设计'},{label:'互联网与科普'},{label:'其他'}]
     }
   },
   methods:{
-    handleCurrentChange(val) {
-    var that = this;
-    var keyword=that.$route.query.query;
-    if(that.isscore==false){
-      this.$axios({
-        type:"get",
-        url:apiurl.search,
-        params:{
-            "query":keyword,
-            "page":val,
-        }
-    }).then(res=>{
-        if(res.status==200){
-            this.books = null
-            that.books = res.data.data.books
-            that.pages = res.data.data.row
-        }
-    })
-    }else{
-      this.$axios({
-              method:"put",
-              url:apiurl.search,
-              params:{
-                  "query":keyword,
-                  "page":val,
-              }
-          }).then(res=>{
-              if(res.status==200){
-                  this.books = null
+      //操作树形结构的事件
+      handleNodeClick(data,node) {
+          var father = this.mapper[node.parent['label']]
+          var son = this.mapper[data['label']]
+          if(father==undefined){
+             this.$router.push({ name: 'bigcategory', params: {BigCategory:son}})
+          }else{
+             this.$router.push({ name: 'smallcategory', params: {BigCategory:father,SmallCategory:son}})
+          }
+      },
+      //分页组件的事件
+      handleCurrentChange(val) {
+          var that = this
+          var keyword=that.$route.query.query
+            that.$axios({
+            method:"get",
+            url:apiurl.search,
+            params:{
+              "query":keyword,
+              "page":val,
+            }
+            }).then(res=>{
+                if(res.status==200){
                   that.books = res.data.data.books
-              }
-          })
-    }
-    },
-    score(){
-          var that = this;
-          that.isscore =true;
-          var keyword=that.$route.query.query;
-          this.$axios({
-              method:"put",
-              url:apiurl.search,
-              params:{
-                  "query":keyword,
-                  "page":that.currentPage,
-              }
-          }).then(res=>{
-              if(res.status==200){
-                  this.books = null
-                  that.books = res.data.data.books
-              }
-          })
-      }
-  }
+                  // that.pages = res.data.data.row
+                }
+            })
+      },
+  },
+  watch: {
+      $route(){  //监听路由参数变化
+        var that = this
+        var keyword = that.$route.query.query
+        that.$axios({
+            type:"get",
+            url:apiurl.search,
+            params:{
+              "query":keyword,
+            }
+        }).then(res=>{
+            if(res.status==200){
+                that.books = res.data.data.books
+                that.pages = res.data.data.row
+            }
+        })
+      },
+}
 }
 </script>
 
@@ -163,6 +167,12 @@ export default {
   float: left;
   height: 100%;
   width: 30%;
+}
+.tree{
+  position: relative;
+  top:50px;
+  left: 50px;
+  width: 60%;
 }
 .ul2{
   position: relative;
@@ -224,31 +234,39 @@ export default {
   display:block;
   height: 9.7%;
 }
-.img{
+.imgdiv{
   position: relative;
   float: left;
   height: 150px;
-  width: 120px;
+  width: 15%;
+}
+.img{
+  width:100%;
+	height:100%;
 }
 .ceng{
   position: relative;
+  left: 2%;
   float: left;
+  width: 75%;
 }
 .bookname{
-  position: relative;
+  /* position: relative; */
+  width: 100%;
   left: 15px;
   font-size: 20px;
   font-family: serif;
   font-weight: bold;
 }
 .autor{
-  position: relative;
+  /* position: relative; */
+  width: 100%;
   left: 15px;
   font-family: serif;
 }
 .desc{
-  position: relative;
-  width: 80%;
+  /* position: relative; */
+  width: 100%;
   left: 15px;
   font-size: 5px;
 }

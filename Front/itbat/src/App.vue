@@ -20,6 +20,8 @@
           <router-view/>
       </el-main>
       <el-footer>
+               <span style="font-size:5px">此应用是仿照IT熊猫网站写的,仅用于学习开发。</span>
+               <a href="https://itpanda.net/book/"><span style="font-size:5px">IT熊猫地址:https://itpanda.net/book/</span></a>
       </el-footer>
       </el-container>
   </div>
@@ -40,8 +42,7 @@ export default {
       search(){
         var that = this
         var keyword = that.text;
-        that.$router.push({ path: '/search', query: {query:keyword} })
-        this.$router.go(0)
+        that.$router.push({ path: '/search', query: {query:keyword}})
       }
   }
 }
@@ -49,9 +50,10 @@ export default {
 
 <style scoped>
 .container{
-  height: 2000px;
+  margin-top: 40px;
 }
 .el-header {
+  margin-top: -40px;
   background-color: rgb(253, 254, 255);
   color: #333;
   text-align: center;
