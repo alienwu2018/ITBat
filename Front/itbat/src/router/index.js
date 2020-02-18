@@ -4,7 +4,7 @@ import index from '@/components/index'
 import search from '@/components/search'
 import bigcategory from '@/components/BigCategory'
 import smallCategory    from '@/components/SmallCategory'
-import book from '@/components/book'
+import book from '@/components/Book'
 import yunpan from '@/components/YunPan'
 
 Vue.use(Router)
